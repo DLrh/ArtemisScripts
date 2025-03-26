@@ -1,0 +1,44 @@
+---
+# Namespace for the operators
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: keycloak-amq-operators
+  labels:
+    openshift.io/cluster-monitoring: "true"
+---
+# OperatorGroup to define the scope of the operators
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: keycloak-amq-operator-group
+  namespace: keycloak-amq-operators
+spec:
+  targetNamespaces:
+    - keycloak-amq-operators
+---
+# Subscription for Keycloak Operator
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: keycloak-operator
+  namespace: keycloak-amq-operators
+spec:
+  channel: stable-v26
+  installPlanApproval: Automatic
+  name: rhbk-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+---
+# Subscription for AMQ Broker Operator
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: amq-broker-rhel8
+  namespace: keycloak-amq-operators
+spec:
+  channel: 7.12.x
+  installPlanApproval: Automatic
+  name: amq-broker-rhel8
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace

@@ -1,0 +1,37 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+    generateName: windows10-installer-run-
+spec:
+    params:
+    -   name: winImageDownloadURL
+        value: https://software.download.prss.microsoft.com/dbazure/Win10_22H2_English_x64v1.iso?t=365e1ecf-f4dc-451c-9919-40c385ffc005&P1=1743053501&P2=601&P3=2&P4=0l0PkjDhDSTkVN4a2PIKJgm%2blZQkiSzVTOMxZd8UUkX9w2Wm2xweJckpi7NXiYkB%2fnBIK5L%2fsGjGg1lKsITaap%2b%2fevIMJGjVg%2b7PkCaoTEzwVb%2fYuuyjKXIqU7F66oK0LrKgTENPmiQx4PC1JA%2f%2bQYMErpy3vyGKhUEL3FA9yiNIC0%2fR7wu2R0bkhzyKSd%2fAJnOBaz4xFAcetdik%2bjjVmvLceiJrw9oO8TzhS09EnM8X3iWQ1elzk2bgxhJGr5tD0inyc6w3r9ZdH%2bNXQc9VD7%2bDvaMI%2fBBGRI6h2gQbi%2bqT1a8vPV6feZJTBMdi%2bgoiCHNSCIY2%2byUz7HauA3eqFg%3d%3d
+    -   name: acceptEula
+        value: false
+    -   name: preferenceName
+        value: windows.10.virtio
+    -   name: autounattendConfigMapName
+        value: windows10-efi-autounattend
+    -   name: baseDvName
+        value: win10
+    -   name: isoDVName
+        value: win10
+    pipelineRef:
+        params:
+        -   name: catalog
+            value: redhat-pipelines
+        -   name: type
+            value: artifact
+        -   name: kind
+            value: pipeline
+        -   name: name
+            value: windows-efi-installer
+        -   name: version
+            value: v4.18.1
+        resolver: hub
+    taskRunSpecs:
+    -   pipelineTaskName: modify-windows-iso-file
+        podTemplate:
+            securityContext:
+                fsGroup: 107
+                runAsUser: 107
