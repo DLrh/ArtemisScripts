@@ -1,0 +1,75 @@
+---
+- name: Install AMQ Broker and Keycloak on Windows 10 VM
+  hosts: windows_vms  # Define your Windows 10 VM group here
+  gather_facts: yes
+  tasks:
+
+    # Install Java (needed for Keycloak)
+    - name: Install Java using Chocolatey
+      win_chocolatey:
+        name: jdk8
+        state: present
+
+    # Download and extract ActiveMQ
+    - name: Download ActiveMQ zip
+      win_get_url:
+        url: https://archive.apache.org/dist/activemq/5.16.3/apache-activemq-5.16.3-bin.zip
+        dest: C:\temp\activemq.zip
+        checksum: 'sha256:fd2ef9ac7392386eecf9f1f0a38b2ed1a7b301bd1a58b818c1ad5b5861b17e1b'
+        
+    - name: Extract ActiveMQ zip
+      win_unzip:
+        src: C:\temp\activemq.zip
+        dest: C:\Program Files\ActiveMQ
+        create: yes
+        force: yes
+
+    # Start ActiveMQ service
+    - name: Install ActiveMQ as a service
+      win_service:
+        name: activemq
+        path: 'C:\Program Files\ActiveMQ\apache-activemq-5.16.3\bin\activemq.bat'
+        startup: auto
+        state: started
+
+    # Download Keycloak
+    - name: Download Keycloak zip
+      win_get_url:
+        url: https://github.com/keycloak/keycloak/releases/download/15.0.2/keycloak-15.0.2.zip
+        dest: C:\temp\keycloak.zip
+
+    - name: Extract Keycloak zip
+      win_unzip:
+        src: C:\temp\keycloak.zip
+        dest: C:\Program Files\Keycloak
+        create: yes
+        force: yes
+
+    # Set up environment variable for Keycloak
+    - name: Set Keycloak environment variable
+      win_environment:
+        name: KEYCLOAK_HOME
+        value: 'C:\Program Files\Keycloak\keycloak-15.0.2'
+
+    # Start Keycloak service
+    - name: Start Keycloak
+      win_command: 'C:\Program Files\Keycloak\keycloak-15.0.2\bin\standalone.bat'
+      async: 600
+      poll: 0
+
+    # Open port for Keycloak (8080) and ActiveMQ (8161) in the firewall
+    - name: Open Keycloak port in firewall
+      win_firewall_rule:
+        name: 'Keycloak Port 8080'
+        localport: 8080
+        protocol: TCP
+        enable: yes
+        action: allow
+
+    - name: Open ActiveMQ port in firewall
+      win_firewall_rule:
+        name: 'ActiveMQ Port 8161'
+        localport: 8161
+        protocol: TCP
+        enable: yes
+        action: allow

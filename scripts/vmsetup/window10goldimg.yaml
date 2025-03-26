@@ -1,0 +1,37 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+    generateName: windows10-installer-run-
+spec:
+    params:
+    -   name: winImageDownloadURL
+        value: ${WIN_IMAGE_DOWNLOAD_URL}
+    -   name: acceptEula
+        value: false
+    -   name: preferenceName
+        value: windows.10.virtio
+    -   name: autounattendConfigMapName
+        value: windows10-efi-autounattend
+    -   name: baseDvName
+        value: win10
+    -   name: isoDVName
+        value: win10
+    pipelineRef:
+        params:
+        -   name: catalog
+            value: redhat-pipelines
+        -   name: type
+            value: artifact
+        -   name: kind
+            value: pipeline
+        -   name: name
+            value: windows-efi-installer
+        -   name: version
+            value: v4.18.1
+        resolver: hub
+    taskRunSpecs:
+    -   pipelineTaskName: modify-windows-iso-file
+        podTemplate:
+            securityContext:
+                fsGroup: 107
+                runAsUser: 107
