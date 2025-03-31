@@ -14,7 +14,7 @@ BROKER_PROPERTIES_TEMPLATE="./artemis/hub-01-broker.template.properties"
 BROKER_YAML="./artemis/hub-01-broker.yaml"
 TEMP_DIR="./artemis/tmp/hub-01"
 
-# Step 1: Create the Artemis TLS secret.
+# Step 1: Create the Artemis secret.
 echo "Creating Artemis TLS secret..."
 oc -n "$ARTEMIS_NAMESPACE" create secret generic broker-tls-secret \
   --from-file=broker.ks="$BROKER_KEYSTORE" \
@@ -22,18 +22,18 @@ oc -n "$ARTEMIS_NAMESPACE" create secret generic broker-tls-secret \
   --from-literal=keyStorePassword="$KEYSTORE_PASSWORD" \
   --from-literal=trustStorePassword="$TRUSTSTORE_PASSWORD"
 
-# Step 2: Create the OIDC JaaS configuration secret.
+# Step 2: Create the OIDC JaaS configsecret.
 echo "Creating OIDC JaaS configuration secret..."
 export TRUSTSTORE_PATH="/etc/broker-tls-secret-volume/client.ts"
 
-# Generate the Keycloak config files using envsubst
+# Generate the Keycloak config
 mkdir -p "$TEMP_DIR"
 
 cat "$KEYCLOAK_BEARER_TOKEN_TEMPLATE" | envsubst > "$TEMP_DIR/keycloak-bearer-token.json"
 cat "$KEYCLOAK_DIRECT_ACCESS_TEMPLATE" | envsubst > "$TEMP_DIR/keycloak-direct-access.json"
 cat "$KEYCLOAK_JS_CLIENT_TEMPLATE" | envsubst > "$TEMP_DIR/keycloak-js-client.json"
 
-# Create the secret for OIDC JaaS configuration
+# Create the secret for OIDC JaaS config
 oc -n "$ARTEMIS_NAMESPACE" create secret generic oidc-jaas-config \
   --from-file=login.config="$LOGIN_CONFIG" \
   --from-file=_keycloak-js-client.json="$TEMP_DIR/keycloak-js-client.json" \
