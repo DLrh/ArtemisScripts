@@ -25,4 +25,21 @@ cat "$KEYCLOAK_YAML" | envsubst | oc -n "$KEYCLOAK_NAMESPACE" apply -f -
 echo "Creating the 'artemis-keycloak' realm..."
 yq -p=json -oy '{"apiVersion": "k8s.keycloak.org/v2alpha1", "kind": "KeycloakRealmImport", "metadata": {"name": "artemis-keycloak"}, "spec": {"keycloakCRName": "keycloak", "realm": .}}' "$REALM_EXPORT_JSON" | oc -n "$KEYCLOAK_NAMESPACE" apply -f -
 
-echo "Script for Keycloak completed successfully."
+# Step 5: Wait for Keycloak to initialize (sleep for 60 seconds).
+echo "Waiting 60 seconds for Keycloak to initialize..."
+sleep 60
+
+# Step 5: Retrieve Keycloak initial admin credentials.
+echo "Retrieving Keycloak initial admin credentials..."
+ADMIN_USERNAME=$(oc -n "$KEYCLOAK_NAMESPACE" get secret keycloak-initial-admin -o jsonpath='{.data.username}' | base64 --decode)
+ADMIN_PASSWORD=$(oc -n "$KEYCLOAK_NAMESPACE" get secret keycloak-initial-admin -o jsonpath='{.data.password}' | base64 --decode)
+
+echo "Keycloak Admin Username: $ADMIN_USERNAME"
+echo "Keycloak Admin Password: $ADMIN_PASSWORD"
+
+# Step 6: Set KC_CLIENT_SECRET
+export KC_CLIENT_SECRET="<insert_secret_here>"
+
+echo "Keycloak client secret set to: $KC_CLIENT_SECRET"
+
+echo "Script for keycloack config completed successfully."
