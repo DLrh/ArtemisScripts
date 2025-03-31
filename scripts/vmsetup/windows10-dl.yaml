@@ -5,7 +5,7 @@ metadata:
 spec:
     params:
     -   name: winImageDownloadURL
-        value: https://software.download.prss.microsoft.com/dbazure/Win10_22H2_English_x64v1.iso?t=365e1ecf-f4dc-451c-9919-40c385ffc005&P1=1743053501&P2=601&P3=2&P4=0l0PkjDhDSTkVN4a2PIKJgm%2blZQkiSzVTOMxZd8UUkX9w2Wm2xweJckpi7NXiYkB%2fnBIK5L%2fsGjGg1lKsITaap%2b%2fevIMJGjVg%2b7PkCaoTEzwVb%2fYuuyjKXIqU7F66oK0LrKgTENPmiQx4PC1JA%2f%2bQYMErpy3vyGKhUEL3FA9yiNIC0%2fR7wu2R0bkhzyKSd%2fAJnOBaz4xFAcetdik%2bjjVmvLceiJrw9oO8TzhS09EnM8X3iWQ1elzk2bgxhJGr5tD0inyc6w3r9ZdH%2bNXQc9VD7%2bDvaMI%2fBBGRI6h2gQbi%2bqT1a8vPV6feZJTBMdi%2bgoiCHNSCIY2%2byUz7HauA3eqFg%3d%3d
+        value: https://software.download.prss.microsoft.com/dbazure/Win10_22H2_English_x64v1.iso?t=2f4514aa-f5d0-4b4a-9e7a-6a4f399764e7&P1=1743528866&P2=601&P3=2&P4=LWJeggEYd3KaANFRT58iELz1imyUj7mFVtbxyGMitkvEkyjC6mL7%2frBFUSuPDvh%2fM7BGbeaza6S8XBXynlU94atkgFSR8w4Blp2AlK2abZ6alGqRHz9h37ehFPzLcWj7HhciG7hTZ9W0K3fiwMWZQXSTqBHz6Bxm8d9uLdkxc43aDcj%2fA0Afq9IhvJZx0SFNzdeSAt6xB4iPXAhwKvtvbJWB8cqbl9bqR%2belDIvfmvNDcmqQIjzqGGFdfXooS3buaNsZIwo9UnXZVHFNTGM3PQ3EH9kk6hjE6Dj3QUczgQIVGfi%2bp95KWBwT0ILqzlLGk6IwfNPrbBGqxre8VRk1Bw%3d%3d
     -   name: acceptEula
         value: false
     -   name: preferenceName
