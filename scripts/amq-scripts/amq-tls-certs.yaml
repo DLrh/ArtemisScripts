@@ -1,0 +1,126 @@
+# Cert manager setup if needed. letsencrypt used
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: keycloak-tls-cert
+  namespace: keycloak
+spec:
+  secretName: keycloak-tls-secret
+  dnsNames:
+    - "<insert_domain_here>"
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: artemis-tls-cert
+  namespace: artemis
+spec:
+  secretName: artemis-tls-secret
+  dnsNames:
+    - "<insert_domain_here>"
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-issuer
+  namespace: keycloak
+spec:
+  acme:
+    email: "<your_email_here>"
+    privateKeySecretRef:
+      name: letsencrypt-private-key
+    server: "https://acme-v02.api.letsencrypt.org/directory"
+    solvers:
+      - http01:
+          ingress: {}
+
+# TLS Cert and Keystore Creation for Keycloak and Artemis Brokers, will need keytool values base64 encoded - cat <file> | base64
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keycloak-tls-cert-secret
+  namespace: keycloak
+type: Opaque
+data:
+  keycloak-key.pem: <base64_encoded_key_content_here>
+  keycloak-certificate.pem: <base64_encoded_cert_content_here>
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hub-01-broker-tls-secret
+  namespace: artemis
+type: Opaque
+data:
+  hub-01-broker-keystore.jks: <base64_encoded_keystore_content_here>
+  hub-01-broker-certificate.crt: <base64_encoded_certificate_here>
+  hub-01-broker-truststore.jks: <base64_encoded_truststore_content_here>
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hub-02-broker-tls-secret
+  namespace: artemis
+type: Opaque
+data:
+  hub-02-broker-keystore.jks: <base64_encoded_keystore_content_here>
+  hub-02-broker-certificate.crt: <base64_encoded_certificate_here>
+  hub-02-broker-truststore.jks: <base64_encoded_truststore_content_here>
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: spoke-01-broker-tls-secret
+  namespace: artemis
+type: Opaque
+data:
+  spoke-01-broker-keystore.jks: <base64_encoded_keystore_content_here>
+  spoke-01-broker-certificate.crt: <base64_encoded_certificate_here>
+  spoke-01-broker-truststore.jks: <base64_encoded_truststore_content_here>
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: spoke-02-broker-tls-secret
+  namespace: artemis
+type: Opaque
+data:
+  spoke-02-broker-keystore.jks: <base64_encoded_keystore_content_here>
+  spoke-02-broker-certificate.crt: <base64_encoded_certificate_here>
+  spoke-02-broker-truststore.jks: <base64_encoded_truststore_content_here>
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: spoke-03-broker-tls-secret
+  namespace: artemis
+type: Opaque
+data:
+  spoke-03-broker-keystore.jks: <base64_encoded_keystore_content_here>
+  spoke-03-broker-certificate.crt: <base64_encoded_certificate_here>
+  spoke-03-broker-truststore.jks: <base64_encoded_truststore_content_here>
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: artemis-client-tls-secret
+  namespace: artemis
+type: Opaque
+data:
+  client-truststore.jks: <base64_encoded_truststore_content_here>

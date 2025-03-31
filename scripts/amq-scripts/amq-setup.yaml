@@ -1,0 +1,92 @@
+# Namespace for the keycloak project
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: keycloak
+  labels:
+    name: keycloak
+    openshift.io/cluster-monitoring: "true"
+
+---
+# Namespace for the artemis project
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: artemis
+  labels:
+    name: artemis
+    openshift.io/cluster-monitoring: "true"
+
+---
+# Namespace for the keycloak operator
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: keycloak-amq-operators
+  labels:
+    openshift.io/cluster-monitoring: "true"
+---
+# OperatorGroup to define the scope of the keycloak operator
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: keycloak-amq-operator-group
+  namespace: keycloak-amq-operators
+spec:
+  targetNamespaces:
+    - keycloak-amq-operators
+---
+# Subscription for Keycloak Operator stable-v26
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: keycloak-operator
+  namespace: keycloak-amq-operators
+spec:
+  channel: stable-v26
+  installPlanApproval: Automatic
+  name: rhbk-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+---
+# Subscription for AMQ Broker Operator 7.12.x
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: amq-broker-rhel8
+  namespace: keycloak-amq-operators
+spec:
+  channel: 7.12.x
+  installPlanApproval: Automatic
+  name: amq-broker-rhel8
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: environment-variables
+  namespace: keycloak
+data:
+  HUB01_DOMAIN: "<insert_domain_here>"
+  HUB02_DOMAIN: "<insert_domain_here>"
+  SPOKE01_DOMAIN: "<insert_domain_here>"
+  SPOKE02_DOMAIN: "<insert_domain_here>"
+  SPOKE03_DOMAIN: "<insert_domain_here>"
+  KC_DOMAIN: "<insert_domain_here>"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: environment-variables
+  namespace: artemis
+data:
+  HUB01_DOMAIN: "<insert_domain_here>"
+  HUB02_DOMAIN: "<insert_domain_here>"
+  SPOKE01_DOMAIN: "<insert_domain_here>"
+  SPOKE02_DOMAIN: "<insert_domain_here>"
+  SPOKE03_DOMAIN: "<insert_domain_here>"
+  KC_DOMAIN: "<insert_domain_here>"
