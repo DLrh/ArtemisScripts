@@ -70,12 +70,11 @@ metadata:
   name: environment-variables
   namespace: keycloak
 data:
-  HUB01_DOMAIN: "<insert_domain_here>"
-  HUB02_DOMAIN: "<insert_domain_here>"
-  SPOKE01_DOMAIN: "<insert_domain_here>"
-  SPOKE02_DOMAIN: "<insert_domain_here>"
-  SPOKE03_DOMAIN: "<insert_domain_here>"
-  KC_DOMAIN: "<insert_domain_here>"
+  HUB01_DOMAIN: "sandbox1459.opentlc.com"
+  SPOKE01_DOMAIN: "sandbox1459.opentlc.com"
+  SPOKE02_DOMAIN: "cluster-7whq6.dynamic.redhatworkshops.io"
+  SPOKE03_DOMAIN: "cluster-7whq6.dynamic.redhatworkshops.io"
+  KC_DOMAIN: "sandbox1459.opentlc.com"
 
 ---
 apiVersion: v1
@@ -84,9 +83,8 @@ metadata:
   name: environment-variables
   namespace: artemis
 data:
-  HUB01_DOMAIN: "<insert_domain_here>"
-  HUB02_DOMAIN: "<insert_domain_here>"
-  SPOKE01_DOMAIN: "<insert_domain_here>"
-  SPOKE02_DOMAIN: "<insert_domain_here>"
-  SPOKE03_DOMAIN: "<insert_domain_here>"
-  KC_DOMAIN: "<insert_domain_here>"
+  HUB01_DOMAIN: "sandbox1459.opentlc.com"
+  SPOKE01_DOMAIN: "sandbox1459.opentlc.com"
+  SPOKE02_DOMAIN: "cluster-7whq6.dynamic.redhatworkshops.io"
+  SPOKE03_DOMAIN: "cluster-7whq6.dynamic.redhatworkshops.io"
+  KC_DOMAIN: "sandbox1459.opentlc.com"

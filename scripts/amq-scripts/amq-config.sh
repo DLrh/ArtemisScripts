@@ -13,6 +13,10 @@ echo "Creating PostgreSQL DB and credentials secret..."
 oc -n "$KEYCLOAK_NAMESPACE" apply -f "$POSTGRESQL_YAML"
 oc -n "$KEYCLOAK_NAMESPACE" create secret generic keycloak-db-secret --from-literal=username=admin --from-literal=password=admin
 
+# Wait for DB and secret creation (sleep for 10 seconds).
+echo "Waiting 10 seconds for Keycloak to initialize..."
+sleep 10
+
 # Step 2: Create the Keycloak TLS secret.
 echo "Creating the Keycloak TLS secret..."
 oc -n "$KEYCLOAK_NAMESPACE" create secret tls keycloak-tls-secret --cert "$KEYCLOAK_CERT_PEM" --key "$KEYCLOAK_KEY_PEM"
@@ -21,13 +25,17 @@ oc -n "$KEYCLOAK_NAMESPACE" create secret tls keycloak-tls-secret --cert "$KEYCL
 echo "Creating the Keycloak server..."
 cat "$KEYCLOAK_YAML" | envsubst | oc -n "$KEYCLOAK_NAMESPACE" apply -f -
 
+# Wait for KC server (sleep for 15 seconds).
+echo "Waiting 15 seconds for Keycloak to initialize..."
+sleep 15
+
 # Step 4: Create the "artemis-keycloak" realm.
 echo "Creating the 'artemis-keycloak' realm..."
 yq -p=json -oy '{"apiVersion": "k8s.keycloak.org/v2alpha1", "kind": "KeycloakRealmImport", "metadata": {"name": "artemis-keycloak"}, "spec": {"keycloakCRName": "keycloak", "realm": .}}' "$REALM_EXPORT_JSON" | oc -n "$KEYCLOAK_NAMESPACE" apply -f -
 
-# Step 5: Wait for Keycloak to initialize (sleep for 60 seconds).
+# Wait for Keycloak to initialize (sleep for 30 seconds).
 echo "Waiting 60 seconds for Keycloak to initialize..."
-sleep 60
+sleep 30
 
 # Step 5: Retrieve Keycloak initial admin credentials.
 echo "Retrieving Keycloak initial admin credentials..."
