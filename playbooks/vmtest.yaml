@@ -23,6 +23,21 @@
         version: "17.0.10"
         state: present
 
+# Set JAVA_HOME env var
+    - name: Set JAVA_HOME environment variable
+      win_environment:
+        name: JAVA_HOME
+        value: "C:\\Program Files\\AdoptOpenJDK\\jdk-22.0.2"  # Update this path to match your JDK path
+        level: user  # Set at the system level for all users
+        state: present
+
+    - name: Add JAVA_HOME to PATH
+      win_environment:
+        name: Path
+        value: "{{ ansible_env.JAVA_HOME }}\\bin"
+        level: user
+        state: present
+
 # Create install dir
     - name: Ensure installation directory exists
       win_file:
