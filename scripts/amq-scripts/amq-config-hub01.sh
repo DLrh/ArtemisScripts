@@ -22,9 +22,17 @@ oc -n "$ARTEMIS_NAMESPACE" create secret generic broker-tls-secret \
   --from-literal=keyStorePassword="$KEYSTORE_PASSWORD" \
   --from-literal=trustStorePassword="$TRUSTSTORE_PASSWORD"
 
-# Step 2: Create the OIDC JaaS configsecret.
+# Wait for secret creation (sleep for 5 seconds).
+echo "Waiting 5 seconds for secret to initialize..."
+sleep 5
+
+# Step 2: Create the OIDC JaaS secret.
 echo "Creating OIDC JaaS configuration secret..."
 export TRUSTSTORE_PATH="/etc/broker-tls-secret-volume/client.ts"
+
+# Wait for OIDC JaaS config secret (sleep for 5 seconds).
+echo "Waiting 5 seconds for OIDC JaaS config secret to initialize..."
+sleep 5
 
 # Generate the Keycloak config
 mkdir -p "$TEMP_DIR"
@@ -39,6 +47,10 @@ oc -n "$ARTEMIS_NAMESPACE" create secret generic oidc-jaas-config \
   --from-file=_keycloak-js-client.json="$TEMP_DIR/keycloak-js-client.json" \
   --from-file=_keycloak-direct-access.json="$TEMP_DIR/keycloak-direct-access.json" \
   --from-file=_keycloak-bearker-token.json="$TEMP_DIR/keycloak-bearer-token.json"
+
+# Wait for OIDC JaaS configsecret (sleep for 5 seconds).
+echo "Waiting 5 seconds for OIDC JaaS config..."
+sleep 5
 
 # Step 3: Create the brokerProperties secret.
 echo "Creating the brokerProperties secret..."

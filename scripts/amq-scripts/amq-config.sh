@@ -1,6 +1,11 @@
 #!/bin/bash web terminal/terminal
 
 # Variables (can use args as well)
+export KC_DOMAIN="<insert_domain_here>"
+export HUB01_DOMAIN="<insert_domain_here>"
+export SPOKE01_DOMAIN="<insert_domain_here>"
+export SPOKE02_DOMAIN="<insert_domain_here>"
+export SPOKE03_DOMAIN="<insert_domain_here>"
 KEYCLOAK_NAMESPACE="keycloak"
 POSTGRESQL_YAML="./keycloak/postgresql.yaml"
 KEYCLOAK_CERT_PEM="./keycloak/tls/certificate.pem"
@@ -50,4 +55,29 @@ export KC_CLIENT_SECRET="<insert_secret_here>"
 
 echo "Keycloak client secret set to: $KC_CLIENT_SECRET"
 
-echo "Script execution completed successfully."
+echo "Keycloak Script execution completed successfully."
+
+echo "Script execution started for Promestheus/Grafana."
+
+# Create/configure the Prometheus server. These steps must be completed as cluster-admin.
+oc -n metrics apply -f "./prometheus/prometheus-additional-scrape-secret.yaml"
+oc -n metrics apply -f "./prometheus/prometheus.yaml"
+
+oc -n metrics create secret generic hub-01-broker-auth --from-literal=user=admin --from-literal=password=admin
+oc -n metrics apply -f "./prometheus/hub-01-broker-service-monitor.yaml"
+
+oc -n metrics create secret generic hub-02-broker-auth --from-literal=user=admin --from-literal=password=admin
+oc -n metrics apply -f "./prometheus/hub-02-broker-service-monitor.yaml"
+
+oc -n metrics create secret generic spoke-01-broker-auth --from-literal=user=admin --from-literal=password=admin
+oc -n metrics apply -f "./prometheus/spoke-01-broker-service-monitor.yaml"
+# End cluster-admin steps.
+
+#
+# Create/configure the Grafana server.
+oc -n metrics apply -f "./grafana/grafana.yaml"
+oc -n metrics expose service grafana-service
+oc -n metrics apply -f "./grafana/prometheus-datasource.yaml"
+oc -n metrics apply -f './grafana/grafana-*-dashboard.yaml'
+
+echo "Script execution completed for Promestheus/Grafana."

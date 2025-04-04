@@ -1,0 +1,44 @@
+---
+- name: Install AMQ Artemis Broker on Windows VM
+  hosts: windows
+  gather_facts: no
+  tasks:
+
+    - name: Download AMQ Artemis ZIP
+      win_get_url:
+        url: "https://downloads.apache.org/activemq/artemis/2.40.0apache-artemis-2.40.0-bin.zip"
+        dest: "C:\\temp\\apache-artemis-2.40.0-bin.zip"
+      register: download_result
+
+    - name: Extract AMQ Artemis ZIP
+      win_unzip:
+        src: "C:\\temp\\apache-artemis-2.40.0-bin.zip"
+        dest: "C:\\Program Files\\"
+        creates: "C:\\Program Files\\apache-artemis-2.40.0"
+      when: download_result.changed
+
+    - name: Set environment variable for ARTEMIS_HOME
+      win_environment:
+        name: ARTEMIS_HOME
+        value: "C:\\Program Files\\apache-artemis-2.40.0"
+        state: present
+
+    - name: Create Artemis service
+      win_command: "C:\\Program Files\\apache-artemis-2.40.0\\bin\\artemis.exe service install"
+      args:
+        chdir: "C:\\Program Files\\apache-artemis-2.40.0\\bin"
+      register: service_result
+      ignore_errors: yes  # In case the service already exists
+
+    - name: Start the Artemis service
+      win_service:
+        name: artemis
+        start_mode: auto
+        state: started
+      when: service_result.rc == 0
+
+    - name: Ensure Artemis service is running
+      win_service:
+        name: artemis
+        state: started
+        start_mode: auto
