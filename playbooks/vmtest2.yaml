@@ -1,9 +1,8 @@
 - name: Provision Windows VM with Keycloak and AMQ Broker
-  hosts: windows_vm #change to windows machine ip
-  gather_facts: yes
+  hosts: windows_vm
   vars:
     keycloak_version: "23.0.6"
-    activemq_version: "2.40.0"
+    activemq_version: "2.31.2"
     keycloak_admin_user: "admin"
     keycloak_admin_password: "admin123"
     amq_user: "admin"
@@ -21,7 +20,7 @@
     - name: Install OpenJDK 17
       win_chocolatey:
         name: openjdk
-        #version: "17.0.10"
+        version: "17.0.10"
         state: present
 
 # Set JAVA_HOME env var
@@ -35,7 +34,7 @@
     - name: Add JAVA_HOME to PATH
       win_environment:
         name: Path
-        value: "C:\\Program Files\\AdoptOpenJDK\\jdk-22.0.2\\bin"
+        value: "{{ ansible_env.JAVA_HOME }}\\bin"
         level: user
         state: present
 
@@ -43,13 +42,6 @@
     - name: Ensure installation directory exists
       win_file:
         path: "{{ install_dir }}"
-        state: directory
-
-# Create Temp dir
-    - name: Ensure installation directory exists
-      win_file:
-        path: C:\Temp
-        level: user
         state: directory
     
 # Keycloak
@@ -65,51 +57,43 @@
         src: "C:\\Temp\\apache-artemis-{{ activemq_version }}-bin.zip"
         dest: "{{ install_dir }}"
 
-    # - name: Rename ActiveMQ Artemis directory
-    #   win_command: "ren {{ install_dir }}\\apache-artemis-{{ activemq_version }} amq-broker"
-    #   args:
-    #     chdir: "{{ install_dir }}"
-    #     creates: "{{ install_dir }}\\amq-broker"
+ #   - name: Rename ActiveMQ Artemis directory
+ #     win_command: "ren {{ install_dir }}\\apache-artemis-{{ activemq_version }} amq-broker"
+ #     args:
+ #       chdir: "{{ install_dir }}"
+ #       creates: "{{ install_dir }}\\amq-broker"
 
     - name: Create AMQ Broker instance
       win_shell: |
         cd "{{ install_dir }}\\apache-artemis-{{ activemq_version }}\\bin"
         artemis.cmd create --user {{ amq_user }} --password {{ amq_password }} --allow-anonymous "{{ install_dir }}\\apache-artemis-{{ activemq_version }}"
       args:
-        creates: "{{ install_dir }}\\apache-artemis-{{ activemq_version }}"
+        creates: "{{ install_dir }}\\amq-broker\\instance"
 
 # Config Step
-    - name: Create AMQ Broker startup script
-      win_file:
-        path: "{{ install_dir }}\\apache-artemis-{{ activemq_version }}\\start-amq.bat"
-        state: touch
+    - name: Create Artemis service using artemis.cmd
+      win_command: "C:\\Program Files\\apache-artemis-2.40.0\\bin\\artemis.cmd service install"
+      args:
+        chdir: "C:\\Program Files\\apache-artemis-2.40.0\\bin"  # Ensure you're in the correct directory
+      register: service_result
+      ignore_errors: yes  # Ignore errors if service already exists
 
-    - name: Configure AMQ Broker startup script
-      win_copy:
-        dest: "{{ install_dir }}\\apache-artemis-{{ activemq_version }}\\start-amq.bat"
-        content: |
-          @echo off
-          set "AMQ_HOME={{ install_dir }}\\apache-artemis-{{ activemq_version }}\\instance"
-          cd /d "%AMQ_HOME%\bin"
-          artemis.cmd run
-        mode: '0755'
+    - name: Display Artemis service creation result
+      debug:
+        msg: "{{ service_result.stdout }}"
 
-    - name: Register AMQ Broker as a Windows service
-      become: yes
-      become_user: Administrator
-      become_method: runas
-      win_nssm:
-        name: "AMQBroker"
-        application: "{{ install_dir }}\\apache-artemis-{{ activemq_version }}\\start-amq.bat"
-        start_mode: auto
-        state: present
-      ignore_errors: yes
-
-    - name: Start AMQ Broker service
+    - name: Start the Artemis service
       win_service:
-        name: "AMQBroker"
+        name: artemis
+        start_mode: auto
         state: started
-      ignore_errors: yes
+      when: service_result.rc == 0
+
+    - name: Ensure Artemis service is running
+      win_service:
+        name: artemis
+        state: started
+        start_mode: auto
 
 # Cleanup
     - name: Remove downloaded archives

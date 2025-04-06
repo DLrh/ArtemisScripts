@@ -1,9 +1,12 @@
 [windows]
-windows_vm ansible_host=10.132.2.23
+windows_vm ansible_host=10.134.0.13
+windows_vm2 ansible_host=10.135.0.134
 
 [windows:vars]
 ansible_user=administrator
-ansible_password=123456
+ansible_password=123456 #change me
 ansible_connection=winrm
-ansible_winrm_transport=basic
+#ansible_winrm_transport=basic
+ansible_winrm_transport=ntlm
 ansible_winrm_port=5985
+ansible_winrm_server_cert_validation=ignore

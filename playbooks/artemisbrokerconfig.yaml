@@ -1,13 +1,14 @@
 ---
 - name: Install AMQ Artemis Broker on Windows VM
   hosts: windows
-  gather_facts: no
+  gather_facts: yes
   tasks:
 
     - name: Download AMQ Artemis ZIP
       win_get_url:
-        url: "https://downloads.apache.org/activemq/artemis/2.40.0apache-artemis-2.40.0-bin.zip"
-        dest: "C:\\temp\\apache-artemis-2.40.0-bin.zip"
+        #url: "https://downloads.apache.org/activemq/artemis/2.40.0apache-artemis-2.40.0-bin.zip"
+        url: "htts://www.apache.org/dyn/closer.cfg?filename=activemq/activemq-artemis/2.40.0/apache-artemis-2.40.0-bin.zip&action=download"
+        dest: "C:\\Temp\\apache-artemis-2.40.0-bin.zip"
       register: download_result
 
     - name: Extract AMQ Artemis ZIP
@@ -22,6 +23,7 @@
         name: ARTEMIS_HOME
         value: "C:\\Program Files\\apache-artemis-2.40.0"
         state: present
+        level: user
 
     - name: Create Artemis service
       win_command: "C:\\Program Files\\apache-artemis-2.40.0\\bin\\artemis.exe service install"
