@@ -1,11 +1,11 @@
 #!/bin/bash web terminal/terminal
 
 # Variables (can use args as well)
-export KC_DOMAIN="<insert_domain_here>"
-export HUB01_DOMAIN="<insert_domain_here>"
-export SPOKE01_DOMAIN="<insert_domain_here>"
-export SPOKE02_DOMAIN="<insert_domain_here>"
-export SPOKE03_DOMAIN="<insert_domain_here>"
+export KC_DOMAIN="apps.cluster-fj8ff.fj8ff.sandbox1459.opentlc.com"
+export HUB01_DOMAIN="apps.cluster-fj8ff.fj8ff.sandbox1459.opentlc.com"
+export SPOKE01_DOMAIN="apps.spoke1.sandbox1459.opentlc.com"
+export SPOKE02_DOMAIN="spoke2.headless.default.svc.cluster.local"
+export SPOKE03_DOMAIN="spoke3.headless.default.svc.cluster.local"
 KEYCLOAK_NAMESPACE="keycloak"
 POSTGRESQL_YAML="./keycloak/postgresql.yaml"
 KEYCLOAK_CERT_PEM="./keycloak/tls/certificate.pem"
@@ -42,18 +42,18 @@ yq -p=json -oy '{"apiVersion": "k8s.keycloak.org/v2alpha1", "kind": "KeycloakRea
 echo "Waiting 60 seconds for Keycloak to initialize..."
 sleep 30
 
-# Step 5: Retrieve Keycloak initial admin credentials.
-echo "Retrieving Keycloak initial admin credentials..."
-ADMIN_USERNAME=$(oc -n "$KEYCLOAK_NAMESPACE" get secret keycloak-initial-admin -o jsonpath='{.data.username}' | base64 --decode)
-ADMIN_PASSWORD=$(oc -n "$KEYCLOAK_NAMESPACE" get secret keycloak-initial-admin -o jsonpath='{.data.password}' | base64 --decode)
+# # Step 5: Retrieve Keycloak initial admin credentials.
+# echo "Retrieving Keycloak initial admin credentials..."
+# ADMIN_USERNAME=$(oc -n "$KEYCLOAK_NAMESPACE" get secret keycloak-initial-admin -o jsonpath='{.data.username}' | base64 --decode)
+# ADMIN_PASSWORD=$(oc -n "$KEYCLOAK_NAMESPACE" get secret keycloak-initial-admin -o jsonpath='{.data.password}' | base64 --decode)
 
-echo "Keycloak Admin Username: $ADMIN_USERNAME"
-echo "Keycloak Admin Password: $ADMIN_PASSWORD"
+# echo "Keycloak Admin Username: $ADMIN_USERNAME"
+# echo "Keycloak Admin Password: $ADMIN_PASSWORD"
 
-# Step 6: Set KC_CLIENT_SECRET
-export KC_CLIENT_SECRET="<insert_secret_here>"
+# # Step 6: Set KC_CLIENT_SECRET
+# export KC_CLIENT_SECRET="<insert_secret_here>"
 
-echo "Keycloak client secret set to: $KC_CLIENT_SECRET"
+# echo "Keycloak client secret set to: $KC_CLIENT_SECRET"
 
 echo "Keycloak Script execution completed successfully."
 
