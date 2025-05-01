@@ -72,7 +72,7 @@ metadata:
 data:
   HUB01_DOMAIN: "apps.cluster-fj8ff.fj8ff.sandbox1459.opentlc.com"
   SPOKE01_DOMAIN: "apps.spoke1.sandbox1459.opentlc.com"
-  SPOKE02_DOMAIN: "windows-10-alpaca.headless.default.svc.cluster.local"
+  SPOKE02_DOMAIN: "spoke2.headless.default.svc.cluster.local"
   SPOKE03_DOMAIN: "spoke3.headless.default.svc.cluster.local"
   KC_DOMAIN: "apps.cluster-fj8ff.fj8ff.sandbox1459.opentlc.com"
 
@@ -85,6 +85,6 @@ metadata:
 data:
   HUB01_DOMAIN: "apps.cluster-fj8ff.fj8ff.sandbox1459.opentlc.com"
   SPOKE01_DOMAIN: "apps.spoke1.sandbox1459.opentlc.com"
-  SPOKE02_DOMAIN: "windows-10-alpaca.headless.default.svc.cluster.local"
+  SPOKE02_DOMAIN: "spoke2.headless.default.svc.cluster.local"
   SPOKE03_DOMAIN: "spoke3.headless.default.svc.cluster.local"
   KC_DOMAIN: "apps.cluster-fj8ff.fj8ff.sandbox1459.opentlc.com"
